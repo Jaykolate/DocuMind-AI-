@@ -8,49 +8,64 @@
 
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background-color: #0b0f19;
+  background-color: #000000;
+  color: #ededed;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Custom scrollbar */
+/* Vercel minimalist scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.6);
+  background: #000000;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(99, 102, 241, 0.3);
+  background: #262626;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(99, 102, 241, 0.6);
+  background: #404040;
 }
 
-/* Glassmorphism utility */
-.glass-panel {
-  background: rgba(26, 34, 52, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+/* Vercel style borders and panels */
+.vercel-card {
+  background-color: #000000;
+  border: 1px solid #262626;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
 }
 
-.glass-panel-subtle {
-  background: rgba(17, 24, 39, 0.6);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+.vercel-card:hover {
+  border-color: #404040;
 }
 
-/* Subtle glow animations */
-@keyframes pulse-subtle {
-  0%, 100% { opacity: 0.8; }
-  50% { opacity: 0.4; }
+.vercel-button-primary {
+  background-color: #ffffff;
+  color: #000000;
+  font-weight: 500;
+  border: 1px solid #ffffff;
+  transition: all 0.15s ease;
 }
 
-.animate-pulse-subtle {
-  animation: pulse-subtle 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+.vercel-button-primary:hover {
+  background-color: #e5e5e5;
+  border-color: #e5e5e5;
+}
+
+.vercel-button-secondary {
+  background-color: #000000;
+  color: #ededed;
+  border: 1px solid #262626;
+  transition: all 0.15s ease;
+}
+
+.vercel-button-secondary:hover {
+  background-color: #111111;
+  border-color: #404040;
+  color: #ffffff;
 }

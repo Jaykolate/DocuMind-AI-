@@ -6,11 +6,7 @@ import {
   MessageSquare, 
   Sparkles, 
   Upload, 
-  Layers, 
-  AlertCircle,
-  HardDrive,
-  FileCode,
-  FileSpreadsheet
+  AlertCircle
 } from 'lucide-react';
 import { api } from '../../services/api';
 import DocumentDetailModal from './DocumentDetailModal';
@@ -41,7 +37,7 @@ export default function DocumentLibrary({
   };
 
   const handleDelete = async (doc) => {
-    if (!window.confirm(`Are you sure you want to delete "${doc.filename}" and purge all its vectors from Qdrant?`)) {
+    if (!window.confirm(`Delete "${doc.filename}" and purge all its vectors?`)) {
       return;
     }
 
@@ -52,7 +48,7 @@ export default function DocumentLibrary({
       onRefresh();
     } catch (err) {
       console.error('Delete error:', err);
-      setError(err.message || 'Failed to delete document and vectors.');
+      setError(err.message || 'Failed to delete document.');
     } finally {
       setDeletingId(null);
     }
@@ -62,58 +58,43 @@ export default function DocumentLibrary({
   const totalBytes = documents.reduce((acc, d) => acc + (d.fileSize || 0), 0);
 
   return (
-    <div className="flex-1 overflow-y-auto p-8 space-y-6 bg-[#0a0e18]">
+    <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#000000]">
       
-      {/* Top Stats Banner */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="p-5 rounded-2xl bg-[#111827] border border-slate-800 flex items-center justify-between">
-          <div>
-            <p className="text-xs text-slate-400 font-medium">Uploaded Documents</p>
-            <h3 className="text-2xl font-bold text-white mt-1">{documents.length}</h3>
-          </div>
-          <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
-            <FileText className="w-5 h-5" />
-          </div>
+      {/* Top Metrics Strip - Vercel Minimalist Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="p-4 rounded-lg bg-[#0a0a0a] border border-[#222222]">
+          <p className="text-[11px] font-mono uppercase text-[#737373]">Documents</p>
+          <h3 className="text-xl font-semibold text-white mt-1 font-mono">{documents.length}</h3>
         </div>
 
-        <div className="p-5 rounded-2xl bg-[#111827] border border-slate-800 flex items-center justify-between">
-          <div>
-            <p className="text-xs text-slate-400 font-medium">Indexed Chunks</p>
-            <h3 className="text-2xl font-bold text-white mt-1">{totalChunks}</h3>
-          </div>
-          <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
-            <Layers className="w-5 h-5" />
-          </div>
+        <div className="p-4 rounded-lg bg-[#0a0a0a] border border-[#222222]">
+          <p className="text-[11px] font-mono uppercase text-[#737373]">Total Chunks</p>
+          <h3 className="text-xl font-semibold text-white mt-1 font-mono">{totalChunks}</h3>
         </div>
 
-        <div className="p-5 rounded-2xl bg-[#111827] border border-slate-800 flex items-center justify-between">
-          <div>
-            <p className="text-xs text-slate-400 font-medium">Corpus Size</p>
-            <h3 className="text-2xl font-bold text-white mt-1">{(totalBytes / 1024 / 1024).toFixed(2)} MB</h3>
-          </div>
-          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-            <HardDrive className="w-5 h-5" />
-          </div>
+        <div className="p-4 rounded-lg bg-[#0a0a0a] border border-[#222222]">
+          <p className="text-[11px] font-mono uppercase text-[#737373]">Storage</p>
+          <h3 className="text-xl font-semibold text-white mt-1 font-mono">{(totalBytes / 1024 / 1024).toFixed(2)} MB</h3>
         </div>
       </div>
 
       {error && (
-        <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+        <div className="p-3 rounded-md bg-[#141414] border border-[#333333] text-white text-xs flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 text-[#888888] shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
-      {/* Main Table / Card Container */}
-      <div className="rounded-2xl bg-[#111827] border border-slate-800 overflow-hidden shadow-xl">
-        <div className="p-5 border-b border-slate-800 flex items-center justify-between">
+      {/* Main Table Container */}
+      <div className="rounded-lg bg-[#0a0a0a] border border-[#222222] overflow-hidden">
+        <div className="p-4 border-b border-[#222222] flex items-center justify-between">
           <div>
-            <h3 className="font-semibold text-white text-base">Knowledge Repository</h3>
-            <p className="text-xs text-slate-400">All documents vectorized with text-embedding-004 and stored in Qdrant</p>
+            <h3 className="font-semibold text-white text-sm">Indexed Documents</h3>
+            <p className="text-[11px] text-[#737373]">Vectorized corpus available for semantic retrieval</p>
           </div>
           <button
             onClick={onOpenUpload}
-            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md shadow-indigo-600/30 transition-all active:scale-95"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white hover:bg-[#e5e5e5] text-black text-xs font-medium transition-colors"
           >
             <Upload className="w-3.5 h-3.5" />
             <span>Upload Document</span>
@@ -121,122 +102,108 @@ export default function DocumentLibrary({
         </div>
 
         {documents.length === 0 ? (
-          <div className="text-center py-16 px-4">
-            <div className="w-16 h-16 rounded-2xl bg-slate-800/80 border border-slate-700/80 flex items-center justify-center mx-auto text-slate-400 mb-3">
-              <FileText className="w-8 h-8" />
+          <div className="text-center py-14 px-4">
+            <div className="w-12 h-12 rounded-lg bg-[#141414] border border-[#262626] flex items-center justify-center mx-auto text-[#666666] mb-3">
+              <FileText className="w-6 h-6" />
             </div>
-            <h4 className="text-sm font-semibold text-slate-200">No documents uploaded yet</h4>
-            <p className="text-xs text-slate-400 max-w-sm mx-auto mt-1 mb-5">
-              Upload your PDF or DOCX files to extract text, generate 768-dim embeddings, and start asking grounded questions.
+            <h4 className="text-xs font-medium text-white">No documents uploaded</h4>
+            <p className="text-[11px] text-[#737373] max-w-sm mx-auto mt-1 mb-4">
+              Upload PDF or DOCX files to extract text, generate 768-dim embeddings, and query.
             </p>
             <button
               onClick={onOpenUpload}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md shadow-indigo-600/20 transition-all"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white hover:bg-[#e5e5e5] text-black text-xs font-medium transition-colors"
             >
               <Upload className="w-3.5 h-3.5" />
-              <span>Upload Your First Document</span>
+              <span>Upload Document</span>
             </button>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-900/60 text-slate-400 border-b border-slate-800/80 uppercase tracking-wider text-[11px] font-semibold">
+              <thead className="bg-[#000000] text-[#737373] border-b border-[#222222] font-mono uppercase text-[10px]">
                 <tr>
-                  <th className="px-6 py-3.5">Document</th>
-                  <th className="px-6 py-3.5">Status</th>
-                  <th className="px-6 py-3.5">Pages</th>
-                  <th className="px-6 py-3.5">Chunks</th>
-                  <th className="px-6 py-3.5">Size</th>
-                  <th className="px-6 py-3.5">Date</th>
-                  <th className="px-6 py-3.5 text-right">Actions</th>
+                  <th className="px-5 py-3">Document</th>
+                  <th className="px-5 py-3">Status</th>
+                  <th className="px-5 py-3">Pages</th>
+                  <th className="px-5 py-3">Chunks</th>
+                  <th className="px-5 py-3">Size</th>
+                  <th className="px-5 py-3">Date</th>
+                  <th className="px-5 py-3 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60 text-slate-200">
-                {documents.map((doc) => {
-                  const isPdf = doc.fileType === 'pdf';
-                  const isDocx = doc.fileType === 'docx' || doc.fileType === 'doc';
-                  return (
-                    <tr key={doc.id} className="hover:bg-slate-800/40 transition-colors">
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
-                            isPdf ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
-                          }`}>
-                            <FileText className="w-4 h-4" />
-                          </div>
-                          <div className="truncate max-w-xs">
-                            <p className="font-semibold text-slate-100 truncate" title={doc.filename}>{doc.filename}</p>
-                            <p className="text-[11px] text-slate-400 uppercase font-mono">{doc.fileType}</p>
-                          </div>
+              <tbody className="divide-y divide-[#1c1c1c] text-[#ededed]">
+                {documents.map((doc) => (
+                  <tr key={doc.id} className="hover:bg-[#121212] transition-colors">
+                    <td className="px-5 py-3.5">
+                      <div className="flex items-center gap-2.5">
+                        <FileText className="w-4 h-4 text-[#737373] shrink-0" />
+                        <div className="truncate max-w-xs">
+                          <p className="font-medium text-white truncate text-xs" title={doc.filename}>{doc.filename}</p>
+                          <p className="text-[10px] text-[#737373] uppercase font-mono">{doc.fileType}</p>
                         </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium ${
-                          doc.status === 'indexed' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
-                          doc.status === 'processing' ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 animate-pulse' :
-                          'bg-rose-500/10 text-rose-400 border border-rose-500/20'
-                        }`}>
-                          <span className={`w-1.5 h-1.5 rounded-full ${doc.status === 'indexed' ? 'bg-emerald-400' : 'bg-indigo-400'}`}></span>
-                          {doc.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 font-mono text-slate-300">
-                        {doc.totalPages || 1}
-                      </td>
-                      <td className="px-6 py-4 font-mono text-slate-300">
-                        <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-200 font-semibold">
-                          {doc.chunkCount || 0}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 font-mono text-slate-400">
-                        {(doc.fileSize / 1024).toFixed(1)} KB
-                      </td>
-                      <td className="px-6 py-4 text-slate-400 text-[11px]">
-                        {new Date(doc.createdAt).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-end gap-1">
-                          <button
-                            onClick={() => onSelectForChat(doc.id)}
-                            className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-400 hover:bg-slate-800 transition-colors"
-                            title="Chat with this document"
-                          >
-                            <MessageSquare className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => onSelectForSummarize(doc.id)}
-                            className="p-1.5 rounded-lg text-slate-400 hover:text-cyan-400 hover:bg-slate-800 transition-colors"
-                            title="Summarize document"
-                          >
-                            <Sparkles className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => handleInspect(doc)}
-                            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
-                            title="Inspect chunks"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(doc)}
-                            disabled={deletingId === doc.id}
-                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition-colors disabled:opacity-50"
-                            title="Delete document and purge vectors"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
+                      </div>
+                    </td>
+                    <td className="px-5 py-3.5">
+                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-mono bg-[#141414] text-white border border-[#262626]">
+                        <span className="w-1.5 h-1.5 rounded-full bg-white"></span>
+                        {doc.status}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3.5 font-mono text-[#888888]">
+                      {doc.totalPages || 1}
+                    </td>
+                    <td className="px-5 py-3.5 font-mono text-white">
+                      {doc.chunkCount || 0}
+                    </td>
+                    <td className="px-5 py-3.5 font-mono text-[#888888]">
+                      {(doc.fileSize / 1024).toFixed(1)} KB
+                    </td>
+                    <td className="px-5 py-3.5 text-[#737373] font-mono text-[10px]">
+                      {new Date(doc.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="px-5 py-3.5 text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        <button
+                          onClick={() => onSelectForChat(doc.id)}
+                          className="p-1.5 rounded text-[#737373] hover:text-white hover:bg-[#1a1a1a] transition-colors"
+                          title="Chat with document"
+                        >
+                          <MessageSquare className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => onSelectForSummarize(doc.id)}
+                          className="p-1.5 rounded text-[#737373] hover:text-white hover:bg-[#1a1a1a] transition-colors"
+                          title="Summarize document"
+                        >
+                          <Sparkles className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => handleInspect(doc)}
+                          className="p-1.5 rounded text-[#737373] hover:text-white hover:bg-[#1a1a1a] transition-colors"
+                          title="Inspect chunks"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(doc)}
+                          disabled={deletingId === doc.id}
+                          className="p-1.5 rounded text-[#737373] hover:text-white hover:bg-[#1a1a1a] transition-colors disabled:opacity-40"
+                          title="Delete"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
         )}
       </div>
 
-      {/* Document Detail Inspection Modal */}
+      {/* Inspect Modal */}
       {selectedDocForModal && (
         <DocumentDetailModal
           isOpen={Boolean(selectedDocForModal)}

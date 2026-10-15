@@ -94,24 +94,19 @@ export default function UploadModal({ isOpen, onClose, onUploadSuccess }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in">
-      <div className="bg-[#111827] border border-slate-700/80 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
+      <div className="bg-[#0a0a0a] border border-[#262626] rounded-xl w-full max-w-lg overflow-hidden shadow-2xl">
         
         {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center">
-              <Upload className="w-4 h-4 text-indigo-400" />
-            </div>
-            <div>
-              <h3 className="font-semibold text-white text-sm">Upload & Index Document</h3>
-              <p className="text-[11px] text-slate-400">PDF & DOCX with automated chunking and embeddings</p>
-            </div>
+        <div className="px-6 py-4 border-b border-[#222222] flex items-center justify-between">
+          <div>
+            <h3 className="font-semibold text-white text-sm">Upload Document</h3>
+            <p className="text-[11px] text-[#737373]">PDF & DOCX files will be indexed into 768-dim vector chunks</p>
           </div>
           <button 
             onClick={handleClose}
             disabled={isUploading}
-            className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors"
+            className="text-[#737373] hover:text-white p-1 rounded hover:bg-[#1a1a1a] transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
@@ -120,15 +115,15 @@ export default function UploadModal({ isOpen, onClose, onUploadSuccess }) {
         {/* Content Body */}
         <div className="p-6 space-y-4">
           {error && (
-            <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2.5">
-              <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+            <div className="p-3 rounded-md bg-[#141414] border border-[#333333] text-white text-xs flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 text-[#888888] shrink-0" />
               <span>{error}</span>
             </div>
           )}
 
           {successInfo && (
-            <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs flex items-center gap-2.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+            <div className="p-3 rounded-md bg-[#141414] border border-[#333333] text-white text-xs flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-white shrink-0" />
               <span>Indexed {successInfo.chunkCount} chunks into vector store!</span>
             </div>
           )}
@@ -140,10 +135,10 @@ export default function UploadModal({ isOpen, onClose, onUploadSuccess }) {
             onDragOver={handleDrag}
             onDrop={handleDrop}
             onClick={() => fileInputRef.current?.click()}
-            className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all ${
+            className={`border border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
               dragActive 
-                ? 'border-indigo-500 bg-indigo-500/10' 
-                : 'border-slate-700/80 hover:border-slate-600 bg-slate-900/50'
+                ? 'border-white bg-[#141414]' 
+                : 'border-[#333333] hover:border-[#555555] bg-[#000000]'
             }`}
           >
             <input
@@ -153,74 +148,71 @@ export default function UploadModal({ isOpen, onClose, onUploadSuccess }) {
               onChange={handleFileChange}
               className="hidden"
             />
-            <div className="flex flex-col items-center gap-2.5">
-              <div className="w-12 h-12 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-indigo-400">
-                <FileText className="w-6 h-6" />
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-10 h-10 rounded-md bg-[#141414] border border-[#262626] flex items-center justify-center text-white">
+                <FileText className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-200">
-                  {selectedFile ? selectedFile.name : 'Click to browse or drag and drop'}
+                <p className="text-xs font-medium text-white">
+                  {selectedFile ? selectedFile.name : 'Select a document or drag and drop'}
                 </p>
-                <p className="text-xs text-slate-400 mt-0.5">
-                  Supported formats: PDF, DOCX (Max 25 MB)
+                <p className="text-[11px] text-[#737373] mt-0.5">
+                  PDF, DOCX up to 25 MB
                 </p>
               </div>
             </div>
           </div>
 
           {selectedFile && (
-            <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between text-xs">
+            <div className="p-3 rounded-md bg-[#000000] border border-[#222222] flex items-center justify-between text-xs">
               <div className="flex items-center gap-2 truncate">
-                <FileText className="w-4 h-4 text-indigo-400 shrink-0" />
-                <span className="font-medium text-slate-200 truncate">{selectedFile.name}</span>
-                <span className="text-slate-400">({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)</span>
+                <FileText className="w-4 h-4 text-[#737373] shrink-0" />
+                <span className="font-medium text-white truncate">{selectedFile.name}</span>
+                <span className="text-[#737373] font-mono">({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)</span>
               </div>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   setSelectedFile(null);
                 }}
-                className="text-slate-400 hover:text-rose-400 ml-2"
+                className="text-[#737373] hover:text-white ml-2"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
             </div>
           )}
 
-          {/* Processing status */}
           {isUploading && (
-            <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-xs text-indigo-300 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="flex items-center gap-2">
-                  <Loader2 className="w-3.5 h-3.5 animate-spin text-indigo-400" />
-                  Extracting text, generating embeddings & indexing...
-                </span>
+            <div className="p-3 rounded-md bg-[#000000] border border-[#262626] text-xs text-[#888888] space-y-2">
+              <div className="flex items-center gap-2 text-white">
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
+                <span>Extracting text & generating embeddings...</span>
               </div>
-              <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                <div className="h-full bg-indigo-500 rounded-full animate-pulse w-3/4"></div>
+              <div className="w-full h-1 bg-[#1a1a1a] rounded-full overflow-hidden">
+                <div className="h-full bg-white rounded-full animate-pulse w-3/4"></div>
               </div>
             </div>
           )}
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 bg-slate-900/60 border-t border-slate-800 flex justify-end gap-2.5">
+        <div className="px-6 py-3 bg-[#000000] border-t border-[#222222] flex justify-end gap-2">
           <button
             onClick={handleClose}
             disabled={isUploading}
-            className="px-4 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 transition-colors"
+            className="px-3.5 py-1.5 rounded-md text-xs font-medium text-[#888888] hover:text-white hover:bg-[#141414] transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleUpload}
             disabled={!selectedFile || isUploading}
-            className="px-5 py-2 rounded-lg text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white shadow-md shadow-indigo-600/30 transition-all flex items-center gap-2"
+            className="px-4 py-1.5 rounded-md text-xs font-medium bg-white hover:bg-[#e5e5e5] disabled:opacity-40 text-black transition-colors flex items-center gap-2"
           >
             {isUploading ? (
               <>
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                <span>Processing...</span>
+                <span>Indexing...</span>
               </>
             ) : (
               <span>Upload & Index</span>

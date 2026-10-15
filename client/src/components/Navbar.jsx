@@ -1,10 +1,7 @@
 import React from 'react';
 import { 
   Upload, 
-  Layers, 
-  CheckCircle2, 
-  HelpCircle,
-  FolderOpen
+  Folder
 } from 'lucide-react';
 
 export default function Navbar({ 
@@ -12,75 +9,69 @@ export default function Navbar({
   documents = [], 
   selectedDocId, 
   setSelectedDocId,
-  onOpenUpload,
-  health
+  onOpenUpload
 }) {
   const getTabDetails = () => {
     switch (activeTab) {
       case 'chat':
         return {
-          title: 'Retrieval Augmented Generation Workspace',
-          subtitle: 'Ask grounded questions across uploaded documents with strict zero-hallucination guardrails.'
+          title: 'Retrieval Workspace',
+          subtitle: 'Grounded question answering across your document corpus'
         };
       case 'documents':
         return {
-          title: 'Document Management & Vector Indexing',
-          subtitle: 'Upload, parse, chunk, and inspect PDF/DOCX documents with automated embedding generation.'
+          title: 'Document Repository',
+          subtitle: 'Manage indexed PDF and DOCX files and inspect vector chunks'
         };
       case 'tools':
         return {
-          title: 'AI Knowledge & Intelligence Tools',
-          subtitle: 'Execute constrained agentic operations: semantic search, single-doc summarizer, and multi-doc comparator.'
-        };
-      case 'health':
-        return {
-          title: 'System Health & Engine Architecture',
-          subtitle: 'Inspect live Gemini models, Qdrant cluster connectivity, and retrieval configuration.'
+          title: 'Intelligence Tools',
+          subtitle: 'Summarization, multi-document comparison, and direct vector search'
         };
       default:
-        return { title: 'NexusRAG Platform', subtitle: 'Agentic Knowledge Retrieval' };
+        return { title: 'NexusRAG', subtitle: 'Agentic Knowledge Retrieval' };
     }
   };
 
   const { title, subtitle } = getTabDetails();
 
   return (
-    <header className="h-20 bg-[#0d121f]/90 border-b border-slate-800/80 px-8 flex items-center justify-between shrink-0 backdrop-blur-md">
+    <header className="h-16 bg-[#000000] border-b border-[#222222] px-6 flex items-center justify-between shrink-0">
       <div>
-        <h2 className="text-lg font-semibold text-white tracking-tight flex items-center gap-2">
+        <h2 className="text-sm font-semibold text-white tracking-tight">
           {title}
         </h2>
-        <p className="text-xs text-slate-400 mt-0.5">{subtitle}</p>
+        <p className="text-[11px] text-[#888888]">{subtitle}</p>
       </div>
 
       <div className="flex items-center gap-3">
-        {/* Document Selector Filter (available in chat and tools) */}
+        {/* Document Selector Filter */}
         {(activeTab === 'chat' || activeTab === 'tools') && (
-          <div className="flex items-center gap-2 bg-slate-900 border border-slate-700/80 rounded-lg px-3 py-1.5 text-xs">
-            <FolderOpen className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
-            <span className="text-slate-400">Context:</span>
+          <div className="flex items-center gap-2 bg-[#0a0a0a] border border-[#262626] rounded-md px-2.5 py-1 text-xs">
+            <Folder className="w-3.5 h-3.5 text-[#888888] shrink-0" />
+            <span className="text-[#888888]">Scope:</span>
             <select
               value={selectedDocId || ''}
               onChange={(e) => setSelectedDocId(e.target.value || null)}
-              className="bg-transparent text-slate-200 text-xs font-medium focus:outline-none cursor-pointer max-w-[180px] truncate"
+              className="bg-transparent text-white text-xs font-medium focus:outline-none cursor-pointer max-w-[200px] truncate"
             >
-              <option value="" className="bg-slate-900 text-slate-200">All Uploaded Documents ({documents.length})</option>
+              <option value="" className="bg-[#0a0a0a] text-white">All Documents ({documents.length})</option>
               {documents.map((doc) => (
-                <option key={doc.id} value={doc.id} className="bg-slate-900 text-slate-200">
-                  {doc.filename} ({doc.chunkCount} chunks)
+                <option key={doc.id} value={doc.id} className="bg-[#0a0a0a] text-white">
+                  {doc.filename}
                 </option>
               ))}
             </select>
           </div>
         )}
 
-        {/* Quick Upload Button */}
+        {/* Upload Button - Vercel Black/White Primary Button */}
         <button
           onClick={onOpenUpload}
-          className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium shadow-sm transition-all shadow-indigo-600/20 active:scale-95"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white hover:bg-[#e5e5e5] text-black text-xs font-medium transition-colors"
         >
           <Upload className="w-3.5 h-3.5" />
-          <span>Upload Document</span>
+          <span>Upload</span>
         </button>
       </div>
     </header>

@@ -1,16 +1,12 @@
 import React, { useState } from 'react';
 import { 
-  Cpu, 
   Sparkles, 
   GitCompare, 
   Search, 
-  FileText, 
   CheckSquare, 
   Square, 
   Loader2, 
-  AlertCircle,
-  Clock,
-  ArrowRight
+  AlertCircle
 } from 'lucide-react';
 import { api } from '../../services/api';
 
@@ -26,7 +22,7 @@ export default function KnowledgeTools({ documents = [], initialDocId }) {
 
   // Tool 2: Compare State
   const [selectedForCompare, setSelectedForCompare] = useState([]);
-  const [compareTopic, setCompareTopic] = useState('Key methodology, findings, and core conclusions');
+  const [compareTopic, setCompareTopic] = useState('Key methodology, findings, and conclusions');
   const [compareResult, setCompareResult] = useState(null);
   const [isComparing, setIsComparing] = useState(false);
   const [compareError, setCompareError] = useState(null);
@@ -66,7 +62,7 @@ export default function KnowledgeTools({ documents = [], initialDocId }) {
   // Execute Compare
   const handleCompare = async () => {
     if (selectedForCompare.length < 2) {
-      setCompareError('Please select at least 2 documents to compare.');
+      setCompareError('Select at least 2 documents to compare.');
       return;
     }
     setIsComparing(true);
@@ -101,88 +97,88 @@ export default function KnowledgeTools({ documents = [], initialDocId }) {
       setSearchResults(data);
     } catch (err) {
       console.error('Search error:', err);
-      setSearchError(err.message || 'Failed to perform semantic search.');
+      setSearchError(err.message || 'Failed to search vector index.');
     } finally {
       setIsSearching(false);
     }
   };
 
   return (
-    <div className="flex-1 overflow-y-auto p-8 space-y-6 bg-[#0a0e18]">
+    <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#000000]">
       
-      {/* Tool Selector Tabs */}
-      <div className="flex border-b border-slate-800 space-x-2">
+      {/* Vercel Style Segmented Navigation Bar */}
+      <div className="flex border-b border-[#222222] space-x-1">
         <button
           onClick={() => setActiveTool('summarize')}
-          className={`flex items-center gap-2 px-4 py-3 text-xs font-semibold border-b-2 transition-all ${
+          className={`flex items-center gap-2 px-4 py-2.5 text-xs font-medium border-b-2 transition-colors ${
             activeTool === 'summarize'
-              ? 'border-indigo-500 text-indigo-400 bg-indigo-500/5'
-              : 'border-transparent text-slate-400 hover:text-slate-200'
+              ? 'border-white text-white'
+              : 'border-transparent text-[#737373] hover:text-white'
           }`}
         >
-          <Sparkles className="w-4 h-4" />
-          <span>Document Summarizer</span>
+          <Sparkles className="w-3.5 h-3.5" />
+          <span>Summarizer</span>
         </button>
 
         <button
           onClick={() => setActiveTool('compare')}
-          className={`flex items-center gap-2 px-4 py-3 text-xs font-semibold border-b-2 transition-all ${
+          className={`flex items-center gap-2 px-4 py-2.5 text-xs font-medium border-b-2 transition-colors ${
             activeTool === 'compare'
-              ? 'border-indigo-500 text-indigo-400 bg-indigo-500/5'
-              : 'border-transparent text-slate-400 hover:text-slate-200'
+              ? 'border-white text-white'
+              : 'border-transparent text-[#737373] hover:text-white'
           }`}
         >
-          <GitCompare className="w-4 h-4" />
-          <span>Multi-Doc Comparator</span>
+          <GitCompare className="w-3.5 h-3.5" />
+          <span>Comparator</span>
         </button>
 
         <button
           onClick={() => setActiveTool('search')}
-          className={`flex items-center gap-2 px-4 py-3 text-xs font-semibold border-b-2 transition-all ${
+          className={`flex items-center gap-2 px-4 py-2.5 text-xs font-medium border-b-2 transition-colors ${
             activeTool === 'search'
-              ? 'border-indigo-500 text-indigo-400 bg-indigo-500/5'
-              : 'border-transparent text-slate-400 hover:text-slate-200'
+              ? 'border-white text-white'
+              : 'border-transparent text-[#737373] hover:text-white'
           }`}
         >
-          <Search className="w-4 h-4" />
-          <span>Semantic Search Explorer</span>
+          <Search className="w-3.5 h-3.5" />
+          <span>Vector Explorer</span>
         </button>
       </div>
 
       {/* TOOL 1: SUMMARIZER */}
       {activeTool === 'summarize' && (
-        <div className="space-y-6">
-          <div className="p-6 rounded-2xl bg-[#111827] border border-slate-800 space-y-4">
+        <div className="space-y-4">
+          <div className="p-5 rounded-lg bg-[#0a0a0a] border border-[#222222] space-y-4">
             <div>
-              <h3 className="text-base font-semibold text-white">Automated Document Summarizer</h3>
-              <p className="text-xs text-slate-400">Extracts and synthesizes core themes, key findings, and actionable takeaways.</p>
+              <h3 className="text-sm font-semibold text-white">Document Summarizer</h3>
+              <p className="text-[11px] text-[#737373]">Extracts and synthesizes core themes, key findings, and takeaways.</p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1.5">Select Document</label>
+                <label className="block text-[11px] font-mono text-[#737373] mb-1.5">DOCUMENT</label>
                 <select
                   value={summarizeDocId}
                   onChange={(e) => setSummarizeDocId(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-[#000000] border border-[#262626] rounded-md px-3 py-2 text-xs text-white focus:outline-none focus:border-[#555555]"
                 >
-                  <option value="">-- Choose a document --</option>
+                  <option value="">-- Choose document --</option>
                   {documents.map(d => (
-                    <option key={d.id} value={d.id}>{d.filename} ({d.chunkCount} chunks)</option>
+                    <option key={d.id} value={d.id}>{d.filename}</option>
                   ))}
                 </select>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1.5">Summary Format</label>
+                <label className="block text-[11px] font-mono text-[#737373] mb-1.5">STYLE</label>
                 <select
                   value={summaryStyle}
                   onChange={(e) => setSummaryStyle(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-[#000000] border border-[#262626] rounded-md px-3 py-2 text-xs text-white focus:outline-none focus:border-[#555555]"
                 >
-                  <option value="detailed">Executive Brief (Thorough Analysis)</option>
-                  <option value="brief">High-Level Executive Summary</option>
-                  <option value="bullets">Key Bullet Points & Metrics</option>
+                  <option value="detailed">Executive Brief (Detailed)</option>
+                  <option value="brief">High-Level Summary</option>
+                  <option value="bullets">Bullet Points & Highlights</option>
                 </select>
               </div>
             </div>
@@ -190,41 +186,33 @@ export default function KnowledgeTools({ documents = [], initialDocId }) {
             <button
               onClick={handleSummarize}
               disabled={!summarizeDocId || isSummarizing}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-xs font-semibold shadow-md shadow-indigo-600/30 transition-all active:scale-95"
+              className="flex items-center gap-2 px-4 py-2 rounded-md bg-white hover:bg-[#e5e5e5] disabled:opacity-40 text-black text-xs font-medium transition-colors"
             >
               {isSummarizing ? (
                 <>
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  <span>Synthesizing Document Summary...</span>
+                  <span>Synthesizing...</span>
                 </>
               ) : (
-                <>
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>Generate Summary</span>
-                </>
+                <span>Generate Summary</span>
               )}
             </button>
 
             {summaryError && (
-              <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+              <div className="p-3 rounded-md bg-[#141414] border border-[#333333] text-white text-xs flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-[#888888] shrink-0" />
                 <span>{summaryError}</span>
               </div>
             )}
           </div>
 
           {summaryResult && (
-            <div className="p-6 rounded-2xl bg-[#111827] border border-slate-800 space-y-3">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold text-white text-sm">{summaryResult.filename}</span>
-                  <span className="text-[11px] text-slate-400">({summaryResult.chunkCount} chunks analyzed)</span>
-                </div>
-                <span className="text-xs font-mono text-slate-400 flex items-center gap-1">
-                  <Clock className="w-3 h-3 text-slate-400" /> {summaryResult.latencyMs}ms
-                </span>
+            <div className="p-5 rounded-lg bg-[#0a0a0a] border border-[#222222] space-y-3">
+              <div className="flex items-center justify-between pb-2.5 border-b border-[#222222] text-xs">
+                <span className="font-medium text-white">{summaryResult.filename}</span>
+                <span className="font-mono text-[#737373] text-[11px]">{summaryResult.latencyMs}ms</span>
               </div>
-              <div className="prose prose-invert max-w-none text-xs leading-relaxed text-slate-200 whitespace-pre-wrap">
+              <div className="text-xs leading-relaxed text-[#cccccc] whitespace-pre-wrap font-sans">
                 {summaryResult.summary}
               </div>
             </div>
@@ -234,39 +222,39 @@ export default function KnowledgeTools({ documents = [], initialDocId }) {
 
       {/* TOOL 2: COMPARATOR */}
       {activeTool === 'compare' && (
-        <div className="space-y-6">
-          <div className="p-6 rounded-2xl bg-[#111827] border border-slate-800 space-y-4">
+        <div className="space-y-4">
+          <div className="p-5 rounded-lg bg-[#0a0a0a] border border-[#222222] space-y-4">
             <div>
-              <h3 className="text-base font-semibold text-white">Cross-Document Comparative Intelligence</h3>
-              <p className="text-xs text-slate-400">Select two or more documents to contrast viewpoints, methodologies, or findings side-by-side.</p>
+              <h3 className="text-sm font-semibold text-white">Cross-Document Comparator</h3>
+              <p className="text-[11px] text-[#737373]">Compare methodologies, findings, or metrics across two or more documents.</p>
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-2">
-                Select Documents to Compare (Min 2):
+              <label className="block text-[11px] font-mono text-[#737373] mb-2">
+                SELECT DOCUMENTS (MIN 2):
               </label>
               {documents.length < 2 ? (
-                <p className="text-xs text-amber-400">Upload at least two documents in the Document Library to use the comparator tool.</p>
+                <p className="text-xs text-[#888888] font-mono">Upload at least two documents in Document Library to use the comparator.</p>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
                   {documents.map(d => {
                     const isSelected = selectedForCompare.includes(d.id);
                     return (
                       <div
                         key={d.id}
                         onClick={() => toggleCompareDoc(d.id)}
-                        className={`p-3 rounded-xl border cursor-pointer select-none transition-all flex items-center gap-2.5 text-xs ${
+                        className={`p-2.5 rounded-md border cursor-pointer select-none transition-colors flex items-center gap-2 text-xs ${
                           isSelected
-                            ? 'bg-indigo-600/15 border-indigo-500/50 text-indigo-200'
-                            : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700'
+                            ? 'bg-[#171717] border-white text-white'
+                            : 'bg-[#000000] border-[#262626] text-[#888888] hover:border-[#404040]'
                         }`}
                       >
                         {isSelected ? (
-                          <CheckSquare className="w-4 h-4 text-indigo-400 shrink-0" />
+                          <CheckSquare className="w-3.5 h-3.5 text-white shrink-0" />
                         ) : (
-                          <Square className="w-4 h-4 text-slate-400 shrink-0" />
+                          <Square className="w-3.5 h-3.5 text-[#555555] shrink-0" />
                         )}
-                        <span className="truncate font-medium">{d.filename}</span>
+                        <span className="truncate">{d.filename}</span>
                       </div>
                     );
                   })}
@@ -275,53 +263,46 @@ export default function KnowledgeTools({ documents = [], initialDocId }) {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1.5">Comparison Focus / Query</label>
+              <label className="block text-[11px] font-mono text-[#737373] mb-1.5">FOCUS TOPIC</label>
               <input
                 type="text"
                 value={compareTopic}
                 onChange={(e) => setCompareTopic(e.target.value)}
-                placeholder="e.g. Architecture differences, security considerations, or performance metrics"
-                className="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+                placeholder="e.g. Core architectural differences, metrics, or limitations"
+                className="w-full bg-[#000000] border border-[#262626] rounded-md px-3 py-2 text-xs text-white placeholder-[#555555] focus:outline-none focus:border-[#555555]"
               />
             </div>
 
             <button
               onClick={handleCompare}
               disabled={selectedForCompare.length < 2 || isComparing}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-xs font-semibold shadow-md shadow-indigo-600/30 transition-all active:scale-95"
+              className="flex items-center gap-2 px-4 py-2 rounded-md bg-white hover:bg-[#e5e5e5] disabled:opacity-40 text-black text-xs font-medium transition-colors"
             >
               {isComparing ? (
                 <>
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  <span>Comparing Across Documents...</span>
+                  <span>Comparing...</span>
                 </>
               ) : (
-                <>
-                  <GitCompare className="w-3.5 h-3.5" />
-                  <span>Execute Comparison</span>
-                </>
+                <span>Execute Comparison</span>
               )}
             </button>
 
             {compareError && (
-              <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+              <div className="p-3 rounded-md bg-[#141414] border border-[#333333] text-white text-xs flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-[#888888] shrink-0" />
                 <span>{compareError}</span>
               </div>
             )}
           </div>
 
           {compareResult && (
-            <div className="p-6 rounded-2xl bg-[#111827] border border-slate-800 space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold text-white text-sm">Comparison Result: "{compareResult.focusTopic}"</span>
-                </div>
-                <span className="text-xs font-mono text-slate-400 flex items-center gap-1">
-                  <Clock className="w-3 h-3 text-slate-400" /> {compareResult.latencyMs}ms
-                </span>
+            <div className="p-5 rounded-lg bg-[#0a0a0a] border border-[#222222] space-y-3">
+              <div className="flex items-center justify-between pb-2.5 border-b border-[#222222] text-xs">
+                <span className="font-medium text-white">Focus: "{compareResult.focusTopic}"</span>
+                <span className="font-mono text-[#737373] text-[11px]">{compareResult.latencyMs}ms</span>
               </div>
-              <div className="prose prose-invert max-w-none text-xs leading-relaxed text-slate-200 whitespace-pre-wrap">
+              <div className="text-xs leading-relaxed text-[#cccccc] whitespace-pre-wrap font-sans">
                 {compareResult.comparison}
               </div>
             </div>
@@ -331,42 +312,41 @@ export default function KnowledgeTools({ documents = [], initialDocId }) {
 
       {/* TOOL 3: DEEP SEMANTIC SEARCH */}
       {activeTool === 'search' && (
-        <div className="space-y-6">
-          <div className="p-6 rounded-2xl bg-[#111827] border border-slate-800 space-y-4">
+        <div className="space-y-4">
+          <div className="p-5 rounded-lg bg-[#0a0a0a] border border-[#222222] space-y-4">
             <div>
-              <h3 className="text-base font-semibold text-white">Direct Vector Search & Similarity Explorer</h3>
-              <p className="text-xs text-slate-400">Test raw cosine similarity retrieval directly against the vector index without LLM synthesis.</p>
+              <h3 className="text-sm font-semibold text-white">Vector Search Explorer</h3>
+              <p className="text-[11px] text-[#737373]">Query raw cosine similarity vectors directly against the indexed chunks.</p>
             </div>
 
-            <form onSubmit={handleDeepSearch} className="space-y-4">
+            <form onSubmit={handleDeepSearch} className="space-y-3">
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1.5">Search Query</label>
+                <label className="block text-[11px] font-mono text-[#737373] mb-1.5">QUERY</label>
                 <div className="flex gap-2">
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Enter keywords or semantic concept..."
-                    className="flex-1 bg-slate-900 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+                    className="flex-1 bg-[#000000] border border-[#262626] rounded-md px-3 py-2 text-xs text-white placeholder-[#555555] focus:outline-none focus:border-[#555555]"
                   />
                   <button
                     type="submit"
                     disabled={!searchQuery.trim() || isSearching}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-xs font-semibold shadow-md shadow-indigo-600/30 transition-all shrink-0"
+                    className="px-4 py-2 rounded-md bg-white hover:bg-[#e5e5e5] disabled:opacity-40 text-black text-xs font-medium transition-colors shrink-0"
                   >
-                    {isSearching ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Search className="w-3.5 h-3.5" />}
-                    <span>Search Index</span>
+                    {isSearching ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <span>Search</span>}
                   </button>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">Filter Document</label>
+                  <label className="block text-[10px] font-mono text-[#737373] mb-1">DOCUMENT FILTER</label>
                   <select
                     value={searchDocId}
                     onChange={(e) => setSearchDocId(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-[#000000] border border-[#262626] rounded-md px-2.5 py-1.5 text-xs text-white focus:outline-none"
                   >
                     <option value="">All Documents</option>
                     {documents.map(d => (
@@ -376,8 +356,8 @@ export default function KnowledgeTools({ documents = [], initialDocId }) {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">
-                    Top-K Results: <span className="font-mono text-indigo-400">{searchTopK}</span>
+                  <label className="block text-[10px] font-mono text-[#737373] mb-1">
+                    TOP-K: <span className="text-white font-mono">{searchTopK}</span>
                   </label>
                   <input
                     type="range"
@@ -385,13 +365,13 @@ export default function KnowledgeTools({ documents = [], initialDocId }) {
                     max="15"
                     value={searchTopK}
                     onChange={(e) => setSearchTopK(e.target.value)}
-                    className="w-full accent-indigo-500"
+                    className="w-full accent-white"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">
-                    Score Threshold: <span className="font-mono text-indigo-400">{searchThreshold}</span>
+                  <label className="block text-[10px] font-mono text-[#737373] mb-1">
+                    THRESHOLD: <span className="text-white font-mono">{searchThreshold}</span>
                   </label>
                   <input
                     type="range"
@@ -400,52 +380,50 @@ export default function KnowledgeTools({ documents = [], initialDocId }) {
                     step="0.05"
                     value={searchThreshold}
                     onChange={(e) => setSearchThreshold(e.target.value)}
-                    className="w-full accent-indigo-500"
+                    className="w-full accent-white"
                   />
                 </div>
               </div>
             </form>
 
             {searchError && (
-              <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+              <div className="p-3 rounded-md bg-[#141414] border border-[#333333] text-white text-xs flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-[#888888] shrink-0" />
                 <span>{searchError}</span>
               </div>
             )}
           </div>
 
           {searchResults && (
-            <div className="p-6 rounded-2xl bg-[#111827] border border-slate-800 space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-800 text-xs">
-                <span className="font-semibold text-white">
-                  Found {searchResults.totalMatches} Matching Chunks
+            <div className="p-5 rounded-lg bg-[#0a0a0a] border border-[#222222] space-y-3">
+              <div className="flex items-center justify-between pb-2.5 border-b border-[#222222] text-xs">
+                <span className="font-medium text-white">
+                  Matches: {searchResults.totalMatches}
                 </span>
-                <span className="font-mono text-slate-400 flex items-center gap-1">
-                  <Clock className="w-3 h-3 text-slate-400" /> Latency: {searchResults.latencyMs}ms
-                </span>
+                <span className="font-mono text-[#737373] text-[11px]">{searchResults.latencyMs}ms</span>
               </div>
 
               {searchResults.results.length === 0 ? (
-                <div className="text-center py-8 text-slate-400 text-xs">
-                  No chunks matched the current threshold ({searchThreshold}). Try lowering the score threshold.
+                <div className="text-center py-6 text-[#737373] text-xs font-mono">
+                  No chunks met the similarity threshold ({searchThreshold}).
                 </div>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {searchResults.results.map((res, i) => (
-                    <div key={res.id || i} className="p-4 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-slate-700 transition-colors">
-                      <div className="flex items-center justify-between mb-2">
+                    <div key={res.id || i} className="p-3 rounded-md bg-[#000000] border border-[#222222] hover:border-[#383838] transition-colors">
+                      <div className="flex items-center justify-between mb-1.5 text-xs">
                         <div className="flex items-center gap-2">
-                          <span className="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-mono text-[11px] font-semibold">
-                            Rank #{i + 1}
+                          <span className="px-1.5 py-0.2 rounded bg-[#171717] text-white font-mono text-[10px] border border-[#333333]">
+                            #{i + 1}
                           </span>
-                          <span className="font-semibold text-slate-200 text-xs">{res.filename}</span>
-                          <span className="text-slate-400 text-xs">• p.{res.pageNumber}</span>
+                          <span className="font-medium text-white">{res.filename}</span>
+                          <span className="text-[#737373] font-mono text-[11px]">p.{res.pageNumber}</span>
                         </div>
-                        <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono text-xs font-semibold">
-                          Score: {Math.round(res.similarityScore * 100)}%
+                        <span className="font-mono text-[10px] text-white px-1.5 py-0.2 rounded bg-[#171717] border border-[#262626]">
+                          {Math.round(res.similarityScore * 100)}%
                         </span>
                       </div>
-                      <p className="text-xs text-slate-300 font-serif leading-relaxed italic bg-slate-950/60 p-3 rounded-lg border-l-2 border-indigo-500">
+                      <p className="text-xs text-[#cccccc] font-mono leading-relaxed bg-[#0a0a0a] p-2 rounded border border-[#1f1f1f]">
                         "{res.content}"
                       </p>
                     </div>
