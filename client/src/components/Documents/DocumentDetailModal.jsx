@@ -13,78 +13,65 @@ export default function DocumentDetailModal({ document, isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
-      <div className="bg-[#0a0a0a] border border-[#262626] rounded-xl w-full max-w-3xl max-h-[88vh] flex flex-col overflow-hidden shadow-2xl">
+      <div className="bg-[#141416] border border-[#27272a] rounded-2xl w-full max-w-3xl max-h-[85vh] flex flex-col overflow-hidden shadow-2xl">
         
         {/* Header */}
-        <div className="px-6 py-4 border-b border-[#222222] flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-md bg-[#141414] border border-[#262626] flex items-center justify-center text-white">
-              <FileText className="w-4 h-4" />
+        <div className="px-6 py-5 border-b border-[#27272a] flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-3.5">
+            <div className="w-10 h-10 rounded-xl bg-[#18181b] border border-[#27272a] flex items-center justify-center text-white">
+              <FileText className="w-5 h-5 text-[#a1a1aa]" />
             </div>
             <div>
-              <h3 className="font-semibold text-white text-sm truncate max-w-md">{document.filename}</h3>
-              <p className="text-[11px] text-[#737373] font-mono">
+              <h3 className="font-semibold text-white text-base truncate max-w-md">{document.filename}</h3>
+              <p className="text-xs text-[#a1a1aa] mt-0.5">
                 {document.fileType?.toUpperCase()} • {(document.fileSize / 1024).toFixed(1)} KB • {document.totalPages || 1} Pages • {document.chunkCount || chunks.length} Chunks
               </p>
             </div>
           </div>
           <button 
             onClick={onClose}
-            className="text-[#737373] hover:text-white p-1 rounded hover:bg-[#141414] transition-colors"
+            className="text-[#71717a] hover:text-white p-1.5 rounded-lg hover:bg-[#27272a] transition-colors"
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Metadata Strip */}
-        <div className="px-6 py-2 bg-[#000000] border-b border-[#222222] flex flex-wrap items-center gap-4 text-[11px] text-[#737373] font-mono shrink-0">
-          <span>Hash: {document.fileHash?.slice(0, 10)}...</span>
-          <span>Created: {new Date(document.createdAt).toLocaleDateString()}</span>
-          <span className="text-white flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-white"></span> {document.status}
-          </span>
-        </div>
-
         {/* Filter Bar */}
-        <div className="p-3 border-b border-[#222222] bg-[#000000] shrink-0">
+        <div className="p-4 border-b border-[#27272a] bg-[#09090b] shrink-0">
           <div className="relative">
-            <Search className="w-3.5 h-3.5 text-[#666666] absolute left-3 top-2.5" />
+            <Search className="w-4 h-4 text-[#71717a] absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={filterText}
               onChange={(e) => setFilterText(e.target.value)}
-              placeholder="Search through extracted chunks..."
-              className="w-full bg-[#0a0a0a] border border-[#262626] rounded-md pl-8 pr-3 py-1.5 text-xs text-white placeholder-[#555555] focus:outline-none focus:border-[#555555]"
+              placeholder="Filter chunks..."
+              className="w-full bg-[#141416] border border-[#27272a] rounded-xl pl-10 pr-4 py-2 text-sm text-white placeholder-[#71717a] focus:outline-none focus:border-[#52525b]"
             />
           </div>
         </div>
 
         {/* Chunks List */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-2.5 bg-[#000000]">
+        <div className="flex-1 overflow-y-auto p-6 space-y-3 bg-[#09090b]">
           {filteredChunks.length === 0 ? (
-            <div className="text-center py-10 text-[#666666] text-xs font-mono">
+            <div className="text-center py-12 text-[#71717a] text-sm">
               No matching chunks found.
             </div>
           ) : (
             filteredChunks.map((chunk, idx) => (
               <div 
                 key={chunk.id || idx}
-                className="p-3.5 rounded-lg bg-[#0a0a0a] border border-[#222222] hover:border-[#383838] transition-colors"
+                className="p-4 rounded-xl bg-[#141416] border border-[#27272a] hover:border-[#3f3f46] transition-colors space-y-2"
               >
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center justify-between text-xs text-[#a1a1aa]">
                   <div className="flex items-center gap-2">
-                    <span className="px-1.5 py-0.2 rounded bg-[#171717] text-white font-mono text-[10px] border border-[#333333]">
+                    <span className="px-2 py-0.5 rounded-md bg-[#27272a] text-white font-mono">
                       #{chunk.chunkIndex ?? idx}
                     </span>
-                    <span className="text-[11px] text-[#737373] font-mono">
-                      Page {chunk.pageNumber || 1}
-                    </span>
+                    <span>Page {chunk.pageNumber || 1}</span>
                   </div>
-                  <span className="text-[10px] text-[#666666] font-mono">
-                    {chunk.content?.length || 0} chars
-                  </span>
+                  <span>{chunk.content?.length || 0} characters</span>
                 </div>
-                <div className="p-2.5 rounded bg-[#000000] font-mono text-[#cccccc] text-xs leading-relaxed border border-[#1f1f1f]">
+                <div className="p-3 rounded-lg bg-[#09090b] text-[#d4d4d8] text-sm leading-relaxed border border-[#27272a]/60 font-sans whitespace-pre-wrap">
                   {chunk.content}
                 </div>
               </div>
@@ -93,15 +80,14 @@ export default function DocumentDetailModal({ document, isOpen, onClose }) {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-2.5 bg-[#0a0a0a] border-t border-[#222222] flex justify-end shrink-0">
+        <div className="px-6 py-4 bg-[#141416] border-t border-[#27272a] flex justify-end shrink-0">
           <button
             onClick={onClose}
-            className="px-3.5 py-1.5 rounded-md text-xs font-medium bg-white hover:bg-[#e5e5e5] text-black transition-colors"
+            className="px-5 py-2 rounded-xl text-sm font-medium bg-white hover:bg-[#e4e4e7] text-black transition-colors shadow-sm"
           >
             Close
           </button>
         </div>
-
       </div>
     </div>
   );

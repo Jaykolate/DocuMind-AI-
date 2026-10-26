@@ -57,7 +57,11 @@ export async function uploadDocument(req, res, next) {
       }));
 
       // 6. Store vectors in Qdrant / VectorStore
-      await vectorStore.upsertChunks(chunksWithEmbeddings);
+      const insertResult = await vectorStore.upsertChunks(chunksWithEmbeddings, {
+        documentId: docRecord.id,
+        filename: parsed.filename,
+        extractedLength: parsed.text?.length || 0
+      });
 
       // Save chunks to documentStore for inspection
       documentStore.saveChunks(docRecord.id, chunks);
@@ -68,19 +72,30 @@ export async function uploadDocument(req, res, next) {
         chunkCount: chunks.length
       });
 
-      logger.info(`Successfully ingested & indexed '${originalname}' (${chunks.length} chunks)`);
+      logger.info(`Successfully ingested & indexed '${originalname}' [Doc ID: ${docRecord.id}] (${chunks.length} chunks into '${insertResult?.collection || 'vector store'}')`);
 
       return res.status(201).json({
         message: 'Document successfully uploaded and indexed.',
         document: updatedDoc,
-        chunkCount: chunks.length
+        chunkCount: chunks.length,
+        vectorStore: {
+          collection: insertResult?.collection,
+          pointsInserted: insertResult?.count,
+          backend: insertResult?.backend,
+          status: insertResult?.status
+        }
       });
     } catch (ingestError) {
       documentStore.update(docRecord.id, {
         status: 'error',
         errorMessage: ingestError.message
       });
-      throw ingestError;
+      logger.error(`[INGEST FAILED] Document '${originalname}' [Doc ID: ${docRecord.id}]: ${ingestError.message}`);
+      return res.status(500).json({
+        error: `Indexing failed: ${ingestError.message}`,
+        documentId: docRecord.id,
+        filename: originalname
+      });
     }
   } catch (error) {
     next(error);

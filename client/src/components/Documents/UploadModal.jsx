@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { X, Upload, FileText, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { Upload, X, FileText, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { api } from '../../services/api';
 
 export default function UploadModal({ isOpen, onClose, onUploadSuccess }) {
@@ -8,7 +8,6 @@ export default function UploadModal({ isOpen, onClose, onUploadSuccess }) {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState(null);
   const [successInfo, setSuccessInfo] = useState(null);
-
   const fileInputRef = useRef(null);
 
   if (!isOpen) return null;
@@ -21,27 +20,6 @@ export default function UploadModal({ isOpen, onClose, onUploadSuccess }) {
     } else if (e.type === 'dragleave') {
       setDragActive(false);
     }
-  };
-
-  const validateAndSetFile = (file) => {
-    setError(null);
-    setSuccessInfo(null);
-
-    const validExtensions = ['.pdf', '.docx', '.doc'];
-    const fileName = file.name.toLowerCase();
-    const isValidExt = validExtensions.some(ext => fileName.endsWith(ext));
-
-    if (!isValidExt) {
-      setError('Invalid file type. Please upload a PDF (.pdf) or Word document (.docx).');
-      return;
-    }
-
-    if (file.size > 25 * 1024 * 1024) {
-      setError('File size exceeds the 25 MB limit.');
-      return;
-    }
-
-    setSelectedFile(file);
   };
 
   const handleDrop = (e) => {
@@ -60,6 +38,26 @@ export default function UploadModal({ isOpen, onClose, onUploadSuccess }) {
     }
   };
 
+  const validateAndSetFile = (file) => {
+    setError(null);
+    setSuccessInfo(null);
+    const validExtensions = ['.pdf', '.docx', '.doc'];
+    const fileName = file.name.toLowerCase();
+    const isValid = validExtensions.some(ext => fileName.endsWith(ext));
+
+    if (!isValid) {
+      setError('Please upload a PDF or DOCX file.');
+      return;
+    }
+
+    if (file.size > 25 * 1024 * 1024) {
+      setError('File size exceeds the 25 MB limit.');
+      return;
+    }
+
+    setSelectedFile(file);
+  };
+
   const handleUpload = async () => {
     if (!selectedFile || isUploading) return;
 
@@ -72,13 +70,13 @@ export default function UploadModal({ isOpen, onClose, onUploadSuccess }) {
       onUploadSuccess(response.document);
       setTimeout(() => {
         handleClose();
-      }, 1500);
+      }, 1200);
     } catch (err) {
       console.error('Upload error:', err);
       if (err.status === 409) {
-        setError(`Document already exists in your library. (${err.message})`);
+        setError(`This document is already indexed.`);
       } else {
-        setError(err.message || 'Failed to parse and index document.');
+        setError(err.message || 'Failed to process document.');
       }
     } finally {
       setIsUploading(false);
@@ -94,37 +92,37 @@ export default function UploadModal({ isOpen, onClose, onUploadSuccess }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
-      <div className="bg-[#0a0a0a] border border-[#262626] rounded-xl w-full max-w-lg overflow-hidden shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+      <div className="bg-[#141416] border border-[#27272a] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
         
         {/* Header */}
-        <div className="px-6 py-4 border-b border-[#222222] flex items-center justify-between">
+        <div className="px-6 py-5 border-b border-[#27272a] flex items-center justify-between">
           <div>
-            <h3 className="font-semibold text-white text-sm">Upload Document</h3>
-            <p className="text-[11px] text-[#737373]">PDF & DOCX files will be indexed into 768-dim vector chunks</p>
+            <h2 className="font-semibold text-white text-lg">Upload Document</h2>
+            <p className="text-sm text-[#a1a1aa] mt-0.5">PDF or Word documents (up to 25 MB)</p>
           </div>
           <button 
             onClick={handleClose}
             disabled={isUploading}
-            className="text-[#737373] hover:text-white p-1 rounded hover:bg-[#1a1a1a] transition-colors"
+            className="text-[#71717a] hover:text-white p-1.5 rounded-lg hover:bg-[#27272a] transition-colors"
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Content Body */}
         <div className="p-6 space-y-4">
           {error && (
-            <div className="p-3 rounded-md bg-[#141414] border border-[#333333] text-white text-xs flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-[#888888] shrink-0" />
+            <div className="p-3.5 rounded-xl bg-[#1c1214] border border-[#3f1d24] text-[#fca5a5] text-sm flex items-center gap-2.5">
+              <AlertCircle className="w-4 h-4 text-[#f87171] shrink-0" />
               <span>{error}</span>
             </div>
           )}
 
           {successInfo && (
-            <div className="p-3 rounded-md bg-[#141414] border border-[#333333] text-white text-xs flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-white shrink-0" />
-              <span>Indexed {successInfo.chunkCount} chunks into vector store!</span>
+            <div className="p-3.5 rounded-xl bg-[#0e1f14] border border-[#1b3d27] text-[#86efac] text-sm flex items-center gap-2.5">
+              <CheckCircle2 className="w-4 h-4 text-[#4ade80] shrink-0" />
+              <span>Document indexed successfully! ({successInfo.chunkCount} chunks)</span>
             </div>
           )}
 
@@ -135,10 +133,10 @@ export default function UploadModal({ isOpen, onClose, onUploadSuccess }) {
             onDragOver={handleDrag}
             onDrop={handleDrop}
             onClick={() => fileInputRef.current?.click()}
-            className={`border border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
+            className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors ${
               dragActive 
-                ? 'border-white bg-[#141414]' 
-                : 'border-[#333333] hover:border-[#555555] bg-[#000000]'
+                ? 'border-white bg-[#18181b]' 
+                : 'border-[#27272a] hover:border-[#3f3f46] bg-[#09090b]'
             }`}
           >
             <input
@@ -148,47 +146,47 @@ export default function UploadModal({ isOpen, onClose, onUploadSuccess }) {
               onChange={handleFileChange}
               className="hidden"
             />
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-10 h-10 rounded-md bg-[#141414] border border-[#262626] flex items-center justify-center text-white">
-                <FileText className="w-5 h-5" />
+            <div className="flex flex-col items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-[#18181b] border border-[#27272a] flex items-center justify-center text-white">
+                <Upload className="w-5 h-5 text-[#a1a1aa]" />
               </div>
               <div>
-                <p className="text-xs font-medium text-white">
-                  {selectedFile ? selectedFile.name : 'Select a document or drag and drop'}
+                <p className="text-[15px] font-medium text-white">
+                  {selectedFile ? selectedFile.name : 'Choose a file or drag and drop'}
                 </p>
-                <p className="text-[11px] text-[#737373] mt-0.5">
-                  PDF, DOCX up to 25 MB
+                <p className="text-xs text-[#71717a] mt-1">
+                  PDF and DOCX formats supported
                 </p>
               </div>
             </div>
           </div>
 
           {selectedFile && (
-            <div className="p-3 rounded-md bg-[#000000] border border-[#222222] flex items-center justify-between text-xs">
-              <div className="flex items-center gap-2 truncate">
-                <FileText className="w-4 h-4 text-[#737373] shrink-0" />
+            <div className="p-3.5 rounded-xl bg-[#18181b] border border-[#27272a] flex items-center justify-between text-sm">
+              <div className="flex items-center gap-2.5 truncate">
+                <FileText className="w-4 h-4 text-[#a1a1aa] shrink-0" />
                 <span className="font-medium text-white truncate">{selectedFile.name}</span>
-                <span className="text-[#737373] font-mono">({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)</span>
+                <span className="text-[#71717a] text-xs font-mono">({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)</span>
               </div>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   setSelectedFile(null);
                 }}
-                className="text-[#737373] hover:text-white ml-2"
+                className="text-[#71717a] hover:text-white p-1 rounded"
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
           )}
 
           {isUploading && (
-            <div className="p-3 rounded-md bg-[#000000] border border-[#262626] text-xs text-[#888888] space-y-2">
-              <div className="flex items-center gap-2 text-white">
-                <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
-                <span>Extracting text & generating embeddings...</span>
+            <div className="p-3.5 rounded-xl bg-[#18181b] border border-[#27272a] text-sm text-[#a1a1aa] space-y-2">
+              <div className="flex items-center gap-2.5 text-white">
+                <Loader2 className="w-4 h-4 animate-spin text-white" />
+                <span>Extracting text and generating embeddings...</span>
               </div>
-              <div className="w-full h-1 bg-[#1a1a1a] rounded-full overflow-hidden">
+              <div className="w-full h-1.5 bg-[#27272a] rounded-full overflow-hidden">
                 <div className="h-full bg-white rounded-full animate-pulse w-3/4"></div>
               </div>
             </div>
@@ -196,26 +194,26 @@ export default function UploadModal({ isOpen, onClose, onUploadSuccess }) {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-3 bg-[#000000] border-t border-[#222222] flex justify-end gap-2">
+        <div className="px-6 py-4 bg-[#09090b] border-t border-[#27272a] flex justify-end gap-3">
           <button
             onClick={handleClose}
             disabled={isUploading}
-            className="px-3.5 py-1.5 rounded-md text-xs font-medium text-[#888888] hover:text-white hover:bg-[#141414] transition-colors"
+            className="px-4 py-2 rounded-xl text-sm font-medium text-[#a1a1aa] hover:text-white hover:bg-[#18181b] transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleUpload}
             disabled={!selectedFile || isUploading}
-            className="px-4 py-1.5 rounded-md text-xs font-medium bg-white hover:bg-[#e5e5e5] disabled:opacity-40 text-black transition-colors flex items-center gap-2"
+            className="px-5 py-2 rounded-xl text-sm font-medium bg-white hover:bg-[#e4e4e7] disabled:opacity-40 text-black transition-colors flex items-center gap-2 shadow-sm"
           >
             {isUploading ? (
               <>
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                <Loader2 className="w-4 h-4 animate-spin" />
                 <span>Indexing...</span>
               </>
             ) : (
-              <span>Upload & Index</span>
+              <span>Upload Document</span>
             )}
           </button>
         </div>

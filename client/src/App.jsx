@@ -39,7 +39,7 @@ export default function App() {
   };
 
   return (
-    <div className="flex h-screen bg-[#000000] text-[#ededed] overflow-hidden font-sans">
+    <div className="flex h-screen bg-[#09090b] text-[#f4f4f5] overflow-hidden font-sans">
       {/* Sidebar Navigation */}
       <Sidebar
         activeTab={activeTab}
@@ -48,7 +48,7 @@ export default function App() {
       />
 
       {/* Main Content Workspace */}
-      <div className="flex-1 flex flex-col h-screen min-w-0 bg-[#000000]">
+      <div className="flex-1 flex flex-col h-screen min-w-0 bg-[#09090b]">
         <Navbar
           activeTab={activeTab}
           documents={documents}
@@ -57,7 +57,7 @@ export default function App() {
           onOpenUpload={() => setIsUploadOpen(true)}
         />
 
-        <main className="flex-1 flex min-h-0 overflow-hidden bg-[#000000]">
+        <main className="flex-1 flex min-h-0 overflow-hidden bg-[#09090b]">
           {activeTab === 'chat' && (
             <ChatWindow
               documents={documents}

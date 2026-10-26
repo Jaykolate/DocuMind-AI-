@@ -8,42 +8,39 @@ export default function CitationCard({ citation }) {
   const matchPercent = similarityScore ? Math.round(similarityScore * 100) : null;
 
   return (
-    <div className="rounded-md bg-[#0a0a0a] border border-[#262626] text-xs transition-colors hover:border-[#383838]">
+    <div className="rounded-xl bg-[#141416] border border-[#27272a] text-sm transition-colors hover:border-[#3f3f46]">
       <div 
         onClick={() => setIsExpanded(!isExpanded)}
-        className="p-2.5 flex items-center justify-between cursor-pointer select-none"
+        className="p-3 flex items-center justify-between cursor-pointer select-none gap-2"
       >
-        <div className="flex items-center gap-2 overflow-hidden">
-          <span className="px-1.5 py-0.5 rounded bg-[#171717] text-white font-mono text-[10px] border border-[#333333]">
-            S{citationId}
+        <div className="flex items-center gap-2.5 min-w-0">
+          <span className="px-2 py-0.5 rounded-md bg-[#27272a] text-[#d4d4d8] text-xs font-medium shrink-0">
+            {citationId}
           </span>
-          <FileText className="w-3.5 h-3.5 text-[#888888] shrink-0" />
-          <span className="font-medium text-white truncate max-w-[150px] sm:max-w-[200px]" title={filename}>
+          <FileText className="w-4 h-4 text-[#a1a1aa] shrink-0" />
+          <span className="font-medium text-white truncate text-[14px]" title={filename}>
             {filename}
           </span>
-          <span className="text-[11px] text-[#888888] font-mono">
+          <span className="text-xs text-[#71717a] shrink-0">
             p.{pageNumber}
           </span>
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
           {matchPercent !== null && (
-            <span className="text-[10px] px-1.5 py-0.2 rounded font-mono text-[#a1a1a1] bg-[#141414] border border-[#262626]">
+            <span className="text-xs px-2 py-0.5 rounded-md bg-[#1f1f23] text-[#a1a1aa] border border-[#2e2e33]">
               {matchPercent}%
             </span>
           )}
-          <button className="text-[#888888] hover:text-white p-0.5">
-            {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+          <button className="text-[#71717a] hover:text-white p-0.5" aria-label="Toggle excerpt">
+            {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
           </button>
         </div>
       </div>
 
-      {isExpanded && (
-        <div className="px-3 pb-3 pt-2 border-t border-[#1f1f1f] bg-[#000000]">
-          <p className="text-[10px] text-[#666666] uppercase font-mono tracking-wider mb-1.5">
-            Retrieved Excerpt
-          </p>
-          <div className="p-2.5 rounded bg-[#0a0a0a] border border-[#222222] text-[#cccccc] text-xs leading-relaxed max-h-48 overflow-y-auto font-mono">
+      {isExpanded && excerpt && (
+        <div className="px-3 pb-3 pt-1 border-t border-[#27272a]/60">
+          <div className="p-3 rounded-lg bg-[#09090b] border border-[#27272a]/80 text-[#d4d4d8] text-[13px] leading-relaxed max-h-48 overflow-y-auto">
             "{excerpt}"
           </div>
         </div>

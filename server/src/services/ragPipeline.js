@@ -65,15 +65,7 @@ function synthesizeOfflineAnswer(sources, question, docName) {
   return summary;
 }
 
-/**
- * Executes the full End-to-End RAG Pipeline:
- * 1. Embed query
- * 2. Vector retrieval from Qdrant/VectorStore
- * 3. Fallback check for document-scoped or exploratory queries
- * 4. Context assembly with guardrails
- * 5. Gemini generation
- * 6. Source citations mapping
- */
+
 export async function executeRagPipeline({
   question,
   documentId = null,

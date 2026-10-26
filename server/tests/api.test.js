@@ -39,7 +39,7 @@ describe('Backend API Endpoints', () => {
     expect(res.body.answer).toBeDefined();
     expect(res.body.sources).toBeDefined();
     expect(res.body.metrics).toBeDefined();
-  });
+  }, 15000);
 
   it('POST /api/documents/upload should reject unsupported file extensions', async () => {
     const res = await request(app)

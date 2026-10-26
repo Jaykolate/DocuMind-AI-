@@ -14,13 +14,12 @@ function getGenAI() {
   return genAIInstance;
 }
 
-function normalizeVector(vec, targetDim = 768) {
-  const sliced = vec.length > targetDim ? vec.slice(0, targetDim) : vec;
+function normalizeVector(vec) {
   let norm = 0;
-  for (let i = 0; i < sliced.length; i++) norm += sliced[i] * sliced[i];
+  for (let i = 0; i < vec.length; i++) norm += vec[i] * vec[i];
   norm = Math.sqrt(norm);
-  if (norm === 0) return Array.from(sliced);
-  return Array.from(sliced).map(v => v / norm);
+  if (norm === 0) return Array.from(vec);
+  return Array.from(vec).map(v => v / norm);
 }
 
 function hashString(str) {
@@ -32,7 +31,7 @@ function hashString(str) {
   return Math.abs(hash);
 }
 
-export function generateTokenProjectionVector(text, dimensions = 768) {
+export function generateTokenProjectionVector(text, dimensions = config.gemini.dimensions) {
   const vector = new Float32Array(dimensions);
   if (!text || typeof text !== 'string') return Array.from(vector);
 
@@ -69,46 +68,41 @@ export function generateTokenProjectionVector(text, dimensions = 768) {
     vector[bigramBucket] += 1.0;
   }
 
-  let norm = 0;
-  for (let i = 0; i < dimensions; i++) {
-    norm += vector[i] * vector[i];
-  }
-
-  norm = Math.sqrt(norm);
-  if (norm > 0) {
-    for (let i = 0; i < dimensions; i++) {
-      vector[i] /= norm;
-    }
-  }
-
-  return Array.from(vector);
+  return normalizeVector(vector);
 }
 
 export async function generateEmbedding(text) {
   const cleanText = (text || '').trim();
+  const targetDim = config.gemini.dimensions;
 
   if (!cleanText) {
-    return new Array(config.gemini.dimensions).fill(0);
+    return new Array(targetDim).fill(0);
   }
 
   const genAI = getGenAI();
 
   if (!genAI) {
-    return generateTokenProjectionVector(cleanText, config.gemini.dimensions);
+    return generateTokenProjectionVector(cleanText, targetDim);
   }
 
   try {
     const model = genAI.getGenerativeModel({ model: config.gemini.embeddingModel });
-    const result = await model.embedContent(cleanText);
+    // Google Gemini embedContent with native or specified dimensionality
+    const requestPayload = {
+      content: { parts: [{ text: cleanText }] },
+      ...(targetDim ? { outputDimensionality: targetDim } : {})
+    };
+
+    const result = await model.embedContent(requestPayload);
 
     if (result && result.embedding && Array.isArray(result.embedding.values)) {
-      return normalizeVector(result.embedding.values, config.gemini.dimensions);
+      return normalizeVector(result.embedding.values);
     }
+    throw new Error('Gemini API returned an empty embedding response.');
   } catch (error) {
-    logger.warn(`Gemini embedding failed (${error.message}). Using local token projection.`);
+    logger.error(`[EMBEDDING ERROR] Failed to generate embedding with model '${config.gemini.embeddingModel}': ${error.message}`);
+    throw new Error(`Embedding generation failed: ${error.message}`);
   }
-
-  return generateTokenProjectionVector(cleanText, config.gemini.dimensions);
 }
 
 export async function generateBatchEmbeddings(texts) {
@@ -116,30 +110,10 @@ export async function generateBatchEmbeddings(texts) {
     return [];
   }
 
-  const genAI = getGenAI();
-
-  if (!genAI) {
-    return texts.map(t => generateTokenProjectionVector(t, config.gemini.dimensions));
+  const results = [];
+  for (const text of texts) {
+    const emb = await generateEmbedding(text);
+    results.push(emb);
   }
-
-  try {
-    const model = genAI.getGenerativeModel({ model: config.gemini.embeddingModel });
-    const results = [];
-    const BATCH_SIZE = 10;
-
-    for (let i = 0; i < texts.length; i += BATCH_SIZE) {
-      const batchSlice = texts.slice(i, i + BATCH_SIZE);
-      for (const t of batchSlice) {
-        try {
-          const single = await model.embedContent(t);
-          results.push(normalizeVector(single.embedding.values, config.gemini.dimensions));
-        } catch (e) {
-          results.push(generateTokenProjectionVector(t, config.gemini.dimensions));
-        }
-      }
-    }
-    return results;
-  } catch (error) {
-    return texts.map(t => generateTokenProjectionVector(t, config.gemini.dimensions));
-  }
+  return results;
 }

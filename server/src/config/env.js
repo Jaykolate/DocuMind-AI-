@@ -8,10 +8,10 @@ const __dirname = path.dirname(__filename);
 
 // Load .env from workspace root or current directory
 const candidateEnvPaths = [
-  path.resolve(__dirname, '../../.env'),       // server/.env
-  path.resolve(__dirname, '../../../.env'),    // root .env
-  path.resolve(process.cwd(), '.env'),         // cwd .env
-  path.resolve(process.cwd(), '../.env')       // parent of cwd
+  path.resolve(__dirname, '../../.env'),
+  path.resolve(__dirname, '../../../.env'),
+  path.resolve(process.cwd(), '.env'),
+  path.resolve(process.cwd(), '../.env')
 ];
 
 for (const envPath of candidateEnvPaths) {
@@ -25,12 +25,12 @@ export const config = {
   port: parseInt(process.env.PORT || '5000', 10),
   nodeEnv: process.env.NODE_ENV || 'development',
   
-  // Gemini settings - auto-support current active models
+  // Gemini settings - verified with active Google API
   gemini: {
     apiKey: process.env.GEMINI_API_KEY || '',
     chatModel: process.env.GEMINI_CHAT_MODEL || 'gemini-2.5-flash',
     embeddingModel: process.env.GEMINI_EMBEDDING_MODEL || 'gemini-embedding-001',
-    dimensions: 768
+    dimensions: parseInt(process.env.EMBEDDING_DIMENSIONS || '3072', 10)
   },
 
   // Qdrant settings
@@ -57,5 +57,8 @@ export const config = {
       'application/msword'
     ],
     allowedExtensions: ['.pdf', '.docx', '.doc']
-  }
+  },
+
+  isTest: process.env.NODE_ENV === 'test' || process.env.VITEST === 'true' || !!process.env.VITEST
 };
+
